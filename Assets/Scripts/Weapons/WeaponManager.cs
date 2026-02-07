@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class WeaponManager : MonoBehaviour
 {
+    [Header("UI")]
+    public WeaponUI weaponUI;
+
     [Header("Weapons In Hand")]
     public WeaponBase[] weapons;
 
@@ -20,6 +23,8 @@ public class WeaponManager : MonoBehaviour
     {
         HandleScrollInput();
         HandleNumberKeys();
+        HandleFireInput();
+        HandleReloadInput();
     }
 
     void HandleScrollInput()
@@ -70,6 +75,9 @@ public class WeaponManager : MonoBehaviour
         currentIndex = index;
         currentWeapon = weapons[index];
         currentWeapon.OnEquip();
+
+        if (weaponUI != null)
+        weaponUI.UpdateWeaponUI(currentWeapon);
     }
 
     void NextWeapon()
@@ -86,4 +94,39 @@ public class WeaponManager : MonoBehaviour
 
         EquipWeapon(prev);
     }
+
+    void HandleFireInput()
+    {
+        if (currentWeapon == null)
+            return;
+
+        if (Input.GetMouseButton(0))
+        {
+            WeaponRaycastShooter shooter =
+                currentWeapon.GetComponent<WeaponRaycastShooter>();
+
+            if (shooter != null)
+            {
+                shooter.Fire();
+
+                if (weaponUI != null)
+                    weaponUI.UpdateWeaponUI(currentWeapon);
+            }
+        }
+    }
+
+    void HandleReloadInput()
+    {
+        if (currentWeapon == null)
+            return;
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            currentWeapon.Reload();
+
+            if (weaponUI != null)
+                weaponUI.UpdateWeaponUI(currentWeapon);
+        }
+    }
+
 }
