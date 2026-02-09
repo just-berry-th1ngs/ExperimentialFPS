@@ -1,14 +1,14 @@
 using UnityEngine;
-using System.Collections;
 
 public class WeaponBase : MonoBehaviour
 {
     [Header("Weapon Info")]
     public string weaponSlotName;
     public string weaponDisplayName;
+    public Sprite weaponIcon;
 
     [Header("Weapon Stats")]
-    public float fireRate; 
+    public float fireRate;
     public int magazineSize;
     public float damage;
 
@@ -18,12 +18,10 @@ public class WeaponBase : MonoBehaviour
     [Header("Ammo")]
     public int currentAmmo;
 
-    [Header("Reload Settings")]
-    public float reloadDuration = 2f; 
-    public bool autoReload = true;
-
-    [HideInInspector] public bool isReloading = false; 
-    [HideInInspector] public float reloadElapsed = 0f; // Tracks reload progress
+    [Header("Reload")]
+    public float reloadDuration = 1.5f;
+    [HideInInspector] public bool isReloading;
+    [HideInInspector] public float reloadElapsed;
 
     private void Awake()
     {
@@ -33,9 +31,6 @@ public class WeaponBase : MonoBehaviour
     public virtual void OnEquip()
     {
         gameObject.SetActive(true);
-
-        if (currentAmmo <= 0 && autoReload)
-            StartCoroutine(ReloadCoroutine());
     }
 
     public virtual void OnUnequip()
@@ -45,32 +40,26 @@ public class WeaponBase : MonoBehaviour
 
     public bool TryUseAmmo()
     {
-        if (isReloading)
-            return false;
+        if (isReloading) return false;
 
         if (currentAmmo > 0)
         {
             currentAmmo--;
-
-            if (currentAmmo <= 0 && autoReload)
-                StartCoroutine(ReloadCoroutine());
-
             return true;
         }
-
-        if (autoReload && !isReloading)
-            StartCoroutine(ReloadCoroutine());
 
         return false;
     }
 
     public void Reload()
     {
-        if (!isReloading)
-            StartCoroutine(ReloadCoroutine());
+        if (isReloading || currentAmmo == magazineSize)
+            return;
+
+        StartCoroutine(ReloadRoutine());
     }
 
-    private IEnumerator ReloadCoroutine()
+    private System.Collections.IEnumerator ReloadRoutine()
     {
         isReloading = true;
         reloadElapsed = 0f;
@@ -83,6 +72,5 @@ public class WeaponBase : MonoBehaviour
 
         currentAmmo = magazineSize;
         isReloading = false;
-        reloadElapsed = 0f;
     }
 }

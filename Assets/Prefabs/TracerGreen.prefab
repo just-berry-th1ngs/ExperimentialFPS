@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5006176232627258491}
   - component: {fileID: 3956882412047472124}
   m_Layer: 0
-  m_Name: Tracer1
+  m_Name: TracerGreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

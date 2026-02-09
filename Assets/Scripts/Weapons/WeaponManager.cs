@@ -4,11 +4,14 @@ public class WeaponManager : MonoBehaviour
 {
     [Header("UI")]
     public WeaponUI weaponUI;
+    public HotbarUI hotbarUI;
 
     [Header("Weapons In Hand")]
     public WeaponBase[] weapons;
 
-    private int currentIndex = 0;
+    public int CurrentIndex => currentIndex;
+
+    private int currentIndex;
     private WeaponBase currentWeapon;
 
     private void Start()
@@ -27,38 +30,11 @@ public class WeaponManager : MonoBehaviour
         HandleReloadInput();
     }
 
-    void HandleScrollInput()
-    {
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
-
-        if (scroll > 0f)
-            NextWeapon();
-        else if (scroll < 0f)
-            PreviousWeapon();
-    }
-
-    void HandleNumberKeys()
-    {
-        for (int i = 0; i < weapons.Length; i++)
-        {
-            // Alpha1 starts at index 0
-            KeyCode key = KeyCode.Alpha1 + i;
-
-            if (Input.GetKeyDown(key))
-            {
-                EquipWeapon(i);
-                break;
-            }
-        }
-    }
-
     void InitializeWeapons()
     {
         foreach (WeaponBase weapon in weapons)
-        {
             if (weapon != null)
                 weapon.OnUnequip();
-        }
     }
 
     public void EquipWeapon(int index)
@@ -77,56 +53,48 @@ public class WeaponManager : MonoBehaviour
         currentWeapon.OnEquip();
 
         if (weaponUI != null)
-        weaponUI.UpdateWeaponUI(currentWeapon);
+            weaponUI.UpdateWeaponUI(currentWeapon);
+
+        if (hotbarUI != null)
+            hotbarUI.ForceRefresh();
     }
 
-    void NextWeapon()
+    void HandleScrollInput()
     {
-        int next = (currentIndex + 1) % weapons.Length;
-        EquipWeapon(next);
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+
+        if (scroll > 0f)
+            EquipWeapon((currentIndex + 1) % weapons.Length);
+        else if (scroll < 0f)
+            EquipWeapon((currentIndex - 1 + weapons.Length) % weapons.Length);
     }
 
-    void PreviousWeapon()
+    void HandleNumberKeys()
     {
-        int prev = currentIndex - 1;
-        if (prev < 0)
-            prev = weapons.Length - 1;
-
-        EquipWeapon(prev);
+        for (int i = 0; i < weapons.Length; i++)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1 + i))
+                EquipWeapon(i);
+        }
     }
 
     void HandleFireInput()
     {
-        if (currentWeapon == null)
-            return;
+        if (currentWeapon == null) return;
 
         if (Input.GetMouseButton(0))
         {
-            WeaponRaycastShooter shooter =
-                currentWeapon.GetComponent<WeaponRaycastShooter>();
-
+            var shooter = currentWeapon.GetComponent<WeaponRaycastShooter>();
             if (shooter != null)
-            {
                 shooter.Fire();
-
-                if (weaponUI != null)
-                    weaponUI.UpdateWeaponUI(currentWeapon);
-            }
         }
     }
 
     void HandleReloadInput()
     {
-        if (currentWeapon == null)
-            return;
+        if (currentWeapon == null) return;
 
         if (Input.GetKeyDown(KeyCode.R))
-        {
             currentWeapon.Reload();
-
-            if (weaponUI != null)
-                weaponUI.UpdateWeaponUI(currentWeapon);
-        }
     }
-
 }

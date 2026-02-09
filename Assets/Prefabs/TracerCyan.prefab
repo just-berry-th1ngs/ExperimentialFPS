@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5006176232627258491}
   - component: {fileID: 3956882412047472124}
   m_Layer: 0
-  m_Name: Tracer2
+  m_Name: TracerCyan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56,7 +56,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f8cdbe9e635e1e54caa82f302faaa8bb, type: 2}
+  - {fileID: 2100000, guid: b988e5c241683a740b9653831bb87605, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -82,7 +82,7 @@ LineRenderer:
   - {x: -19.719404, y: -12.603767, z: -17.111055}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.2
+    widthMultiplier: 0.1
     widthCurve:
       serializedVersion: 2
       m_Curve:
